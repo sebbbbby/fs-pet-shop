@@ -1,12 +1,7 @@
 import fs from 'node:fs'
 import process from 'node:process'
 const subcommand = process.argv[2]
-const title = process.argv[1]
-if (title === 'petshop.js' && subcommand === undefined) {
-    console.log(
-        'WELCOME TO THE PETSHOP PLEASE USE THE FOLLOWING COMMANDS:\nnode [read | create | update | destroy]'
-    )
-}
+
 if (subcommand === 'read') {
     const petIndex = process.argv[3]
     fs.readFile('pets.json', 'utf8', (err, data) => {
@@ -19,7 +14,7 @@ if (subcommand === 'read') {
             petIndex.includes('-') ||
             isNaN(petIndex)
         ) {
-            console.log(pets)
+            console.table(pets)
         } else {
             console.log(pets[petIndex])
         }
@@ -54,7 +49,7 @@ if (subcommand === 'read') {
         )
     }
     //repeating step above with minor adjustments
-} else if (subcommand === 'update') {
+} else if (subcommand == 'update') {
     const petIndex = process.argv[3]
     fs.readFile('pets.json', 'utf8', (err, data) => {
         if (err) {
@@ -66,7 +61,9 @@ if (subcommand === 'read') {
             petIndex.includes('-') ||
             isNaN(petIndex)
         ) {
-            console.log('not a valid index!')
+            console.error(
+                'NOT A VALID INDEX PLEASE TYPE: \nnode pets.js read\nFOR FULL LIST OF PETS'
+            )
         } else if (
             //need to update index since they all moved up by one since we are CALLING the index of the animal that will be changed
             !isNaN(process.argv[4]) &&
@@ -74,12 +71,13 @@ if (subcommand === 'read') {
             process.argv[6] !== undefined
         ) {
             //tried with delete only but kept a NULL value after i deleted the obj from arr
+            //pet to be change aka pet to be deleted
             let petToBeChanged = delete pets[petIndex]
             let petAge = { age: Number(`${process.argv[4]}`) }
             let petKind = { kind: `${process.argv[5]}` }
             let petName = { name: `${process.argv[6]}` }
-            let newPet = Object.assign({}, petAge, petKind, petName)
-            petToBeChanged = newPet
+            let newPetObj = Object.assign({}, petAge, petKind, petName)
+            petToBeChanged = newPetObj
             pets.push(petToBeChanged)
             //used filter to remove null because of the delete feature above
             let pets1 = pets.filter((elements) => {
@@ -91,7 +89,7 @@ if (subcommand === 'read') {
                 console.log('Your Pet is Updated!')
             })
         } else {
-            console.log(
+            console.error(
                 'SOMETHING SEEMS WRONG! PLEASE TYPE: \nnode pets.js update INDEX AGE KIND NAME'
             )
         }
@@ -131,4 +129,8 @@ if (subcommand === 'read') {
             )
         }
     })
+} else {
+    console.error(
+        'WELCOME TO THE PETSHOP PLEASE USE THE FOLLOWING COMMANDS:\nnode [read | create | update | destroy]'
+    )
 }

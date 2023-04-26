@@ -1,5 +1,5 @@
 [
     { "age": 7, "kind": "rainbow", "name": "fido" },
     { "age": 5, "kind": "snake", "name": "Buttons" },
-    { "Age": 10, "Kind": "sloth", "Name": "Poki" }
+    { "age": 10, "kind": "sloth", "name": "Poki" }
 ]
