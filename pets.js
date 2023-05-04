@@ -3,20 +3,24 @@ import process from 'node:process'
 const subcommand = process.argv[2]
 
 if (subcommand === 'read') {
-    const petIndex = process.argv[3]
+    const petIndexStr = process.argv[3]
+    const petIndex = Number(petIndexStr)
     fs.readFile('pets.json', 'utf8', (err, data) => {
         if (err) {
             throw err
         }
         const pets = JSON.parse(data)
-        if (
-            petIndex === undefined ||
-            petIndex.includes('-') ||
-            isNaN(petIndex)
-        ) {
+        if (petIndexStr === undefined) {
             console.table(pets)
+        } else if (
+            Number.isNaN(petIndex) ||
+            petIndex >= pets.length ||
+            petIndex < 0
+        ) {
+            console.error('USAGE: node pets.js read INDEX')
+            process.exit(1)
         } else {
-            console.log(pets[petIndex])
+            console.table(pets[petIndex])
         }
     })
 } else if (subcommand === 'create') {
@@ -40,17 +44,21 @@ if (subcommand === 'read') {
         let newData = JSON.stringify(myPet)
         // console.log(newData)
         fs.writeFile('pets.json', newData, (err) => {
-            if (err) throw err
+            if (err) {
+                throw err
+            }
             console.log('New Pet Added!')
         })
     } else {
-        console.log(
+        console.error(
             'SOMETHING SEEMS WRONG! PLEASE TYPE: \nnode pets.js create AGE KIND NAME'
         )
+        process.exit(1)
     }
     //repeating step above with minor adjustments
 } else if (subcommand == 'update') {
-    const petIndex = process.argv[3]
+    const petIndexStr = process.argv[3]
+    const petIndex = Number(petIndexStr)
     fs.readFile('pets.json', 'utf8', (err, data) => {
         if (err) {
             throw err
@@ -58,12 +66,14 @@ if (subcommand === 'read') {
         const pets = JSON.parse(data)
         if (
             petIndex === undefined ||
-            petIndex.includes('-') ||
-            isNaN(petIndex)
+            Number.isNaN(petIndex) ||
+            petIndex >= pets.length ||
+            petIndex < 0
         ) {
             console.error(
                 'NOT A VALID INDEX PLEASE TYPE: \nnode pets.js read\nFOR FULL LIST OF PETS'
             )
+            process.exit(1)
         } else if (
             //need to update index since they all moved up by one since we are CALLING the index of the animal that will be changed
             !isNaN(process.argv[4]) &&
@@ -103,8 +113,9 @@ if (subcommand === 'read') {
         const pets = JSON.parse(data)
         if (
             petIndex === undefined ||
-            petIndex.includes('-') ||
-            isNaN(petIndex)
+            Number.isNaN(petIndex) ||
+            petIndex >= pets.length ||
+            petIndex < 0
         ) {
             console.log(
                 'THERE IS NO ANIMAL HERE FOR YOU TO DESTROY...\nTRY ANOTHER INDEX'
@@ -124,13 +135,15 @@ if (subcommand === 'read') {
                 console.log('Your Pet Has Been DESTROYED!')
             })
         } else {
-            console.log(
+            console.error(
                 'THERE IS NO ANIMAL HERE FOR YOU TO DESTROY...\nTRY ANOTHER INDEX'
             )
+            process.exit(1)
         }
     })
 } else {
     console.error(
-        'WELCOME TO THE PETSHOP PLEASE USE THE FOLLOWING COMMANDS:\nnode [read | create | update | destroy]'
+        'WELCOME TO THE PETSHOP PLEASE USE THE FOLLOWING COMMANDS:\nnode pets.js [read | create | update | destroy]'
     )
+    process.exit(1)
 }
