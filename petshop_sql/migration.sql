@@ -1,0 +1,7 @@
+DROP TABLE IF EXISTS pet;
+CREATE TABLE pet(
+  id SERIAL PRIMARY KEY NOT NULL,
+  name TEXT,
+  age SMALLINT,
+  kind TEXT
+);
